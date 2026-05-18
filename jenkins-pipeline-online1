@@ -1,0 +1,29 @@
+pipeline{
+    agent any
+    stages{
+        stage("Code"){
+            steps{
+                git branch: 'main', url: 'https://github.com/aarushtechnologies/port1.git'
+            }
+        }
+        stage("Image"){
+            steps{
+                sh "docker build -t portfolio:v$VERSION ."
+            }
+        }
+        stage("Container"){
+            steps{
+                sh '''
+                docker stop portfolio || true
+                docker rm portfolio || true
+                docker run -itd --name portfolio -p 1001:80 portfolio:v$VERSION
+                '''
+            }
+        }
+        
+    }
+}
+
+-------------------
+
+
